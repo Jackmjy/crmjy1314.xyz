@@ -1,14 +1,9 @@
 ---
 title: "Hello, the first attempt!"
-author: Andrew Min
-date: '2019-05-03'
-slug: first
-categories:
-  - R
-tags:
-  - R Markdown
-description: ''
-thumbnail: ''
+author: "Andrew Min"
+date: 2019-05-03T14:34:14-14:40
+categories: ["R"]
+tags: ["R Markdown"]
 ---
 
 This is my first time to attempt to use blogdown building our(my wife and me) website. I want to summarise some problems i meet as a novice.
