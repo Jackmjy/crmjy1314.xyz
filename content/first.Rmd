@@ -1,0 +1,22 @@
+---
+title: "Hello, the first attempt!"
+author: Andrew Min
+date: '2019-05-03'
+slug: first
+categories:
+  - R
+tags:
+  - R Markdown
+description: ''
+thumbnail: ''
+---
+
+This is my first time to attempt to use blogdown building our(my wife and me) website. I want to summarise some problems i meet as a novice.
+
+- first, as a novice, although i know nothing about website building, i can post my blog in my own website follow the steps, so please read it carefully.
+
+- second, we should have our own domain name before you want to build a website
+
+- third, you new domain if is in domestic, it have to be filed about a period, so don’t hurry.
+
+Hope these suggestions can help you, if they’re something wrong, please free free to let me know.
