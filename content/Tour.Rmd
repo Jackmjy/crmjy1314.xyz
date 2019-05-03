@@ -1,0 +1,16 @@
+---
+title: Tour
+author: Andrew Min
+date: '2019-05-03'
+slug: Tour
+categories:
+  - My sweet
+tags:
+  - R
+description: ''
+thumbnail: ''
+---
+> I'am very happy that i have the opportunity to have a tour with my girlfriend(also my future wife, hahah!!!). This is the post to have a memory, and hope more and more in the future!
+
+![My sweet](/./Tour_files/2.jpeg){width=80% height=20%}
+![My sweet](/./Tour_files/3.jpeg){width=80% height=20%}
