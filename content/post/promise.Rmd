@@ -1,0 +1,32 @@
+---
+title: "Promise"
+author: "Andrew Min"
+date: '2019-05-03'
+slug: promise
+categories:
+  - My sweet
+tags:
+  - promise
+description: ''
+thumbnail: ''
+---
+
+# Important to keep in mind
+
+## Places
+
+- France
+- Thailand
+- HongKong
+
+## Household
+
+- Dog
+- Relax
+
+## Necessary
+
+- Buy Clothes
+- Skin care product
+- car
+- house
