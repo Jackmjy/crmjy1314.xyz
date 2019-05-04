@@ -1,0 +1,199 @@
+---
+title: Linear Regression
+author: Andrew Min
+date: '2019-05-04'
+slug: linear regression
+categories:
+  - Econometrics
+tags:
+  - Appiled R
+description: ''
+thumbnail: ''
+---
+
+# 1.线性回归假设
+
+我们经常会使用线性回归拟合模型，但是对于其背后的假设却经常不会过于关注，但是实际上如果对于不同的问题，我们的假设情况不满足的话，就会出现诸如共线性、自相关和异方差等问题，这就需要不同的解决办法。因此，在学习线性回归之前，我们有必要了解一下线性回归的六个基本假设。
+
+- 零均值假定:$E(u_i) = 0, t =1, 2,..,n$，即各期扰动项的均值为0
+
+- 无自相关假定:$E(u_iu_j) = 0, i\neq j$，即各期扰动项互不相关。由于
+$$cov(u_i, u_j) = E((u_i-E(u_i)(u_j-E(u_j))=E(u_iu_j)(根据假设1可得)$$
+因此该假设等同于
+
+$$Cov(u_i, u_j) = 0, i\neq j$$
+
+- 同方差假定: $E(u_t^2) = \sigma^2, t=1,2,...,n$,即各期扰动项的方差是一个常数，同样的根据假设1也可以得到：
+$$var(u_t) = E(u_t-E(u_t))^2=E(u_t^2)$$
+
+- X为非随机的
+
+- $(K+1)<n$，即估计的参数的数量要小于样本的个数
+
+- 无共线性，即各解释变量之间不存在严格的线性关系
+
+# 2.最小二乘估计
+
+## 2.1 最小二乘原理
+为了理解最小二乘的原理，我们使用一个基本的回归模型更加直观化的理解。
+
+```{r}
+# construct variable x and y
+library(ggplot2)
+set.seed(1)
+x <- rnorm(30)
+y <- vector(length = length(x))
+for (i in seq_along(x)) {
+  y[i] = x[i]*runif(1) + runif(1) + rnorm(1)
+}
+df <- data.frame(x = x, y = y)
+
+# plot
+# set a random line with slope 1 and intercept 0.5
+set_slope <- 1
+set_intercept <- 0.5
+p <- ggplot(aes(x,y),data = df)+geom_point() +geom_abline(slope = set_slope, intercept = set_intercept, color = "red") + geom_pointrange(aes(ymin = y, ymax = (x+0.5)), color = "lightpink") + theme_bw() + geom_text(x = -1.8, y = -0.5, label = "The original line", color = "red") + annotate(geom = "segment", x = -1.8, y = -0.7, xend = -1.8, yend = -1.3, arrow = arrow(unit(10,"inch")), color="red")
+p
+
+```
+
+我们可以发现，数据点相对分散，拟合出来的直线与点之间都有一些距离（即图中向下的直线距离），怎么样才能使得我们拟合出来的直线最好呢？我们会很自然想到当然是使得图中的直线距离最小咯！是的，这是正确的想法，但是我们应该用绝对值距离，平方距离，四次方还是什么距离呢？（距离至少要为正数）。我们最后选用平方距离，即使下式最小：$$\sum{e_t^2} = \sum{(Y_t - \hat{Y_t})}$$
+这里因为这样估计出来的参数满足无偏性和最小方差性，后面会说到。
+
+## 2.2 最小二乘估计
+
+首先我们知道
+
+$$\frac{\partial x^T a}{\partial x} = \frac{\partial a^T x}{\partial x} = a $$
+$$\frac{\partial x^TAx}{\partial x} = Ax + A^Tx $$
+
+因此
+
+$$||X\beta-Y||_2 = \beta^TX^TX\beta - Y^TX\beta- \beta^TX^TY+Y^TY$$
+对$x$求导得到
+
+$$\frac{\partial ||X\beta-Y||_2}{\partial \beta} = 2X^TX\beta - 2X^TY = 0$$
+
+因此得到$$\beta = (X^TX)^{-1}X^TY$$
+
+## 2.3 $\beta$ 的性质
+我们的模型为$Y = X\beta + u$ , 估计式为$\hat(Y) = X \hat(\beta)$
+
+### 2.3.1 $\hat{\beta}$的均值
+
+
+\begin{align}
+\hat{\beta} &= (X^TX)^{-1}X^TY \\
+&= (X^TX)^{-1}X^T(X\beta + u)\\
+&=  (X^TX)^{-1}X^TX\beta +  (X^TX)^{-1}X^Tu \\
+&= \beta + (X^TX)^{-1}X^Tu   \\
+&= \beta
+\end{align}
+
+因此,
+$$
+E(\hat{\beta}) = E(\beta)
+$$
+
+### 2.3.2 $\hat{\beta}$的方差
+由\autoref{1}上面式子可得， $\hat{\beta} - \beta = (X^TX)^{-1}X^Tu$
+因此，
+
+\begin{align}
+var(\hat{\beta}) &= E\{((X^TX)^{-1}X^Tu)((X^TX)^{-1}X^Tu)^T\} \\
+&= E((X^TX)^{-1}X^Tuu^TX(X^TX)^{-1})\\
+&= (X^TX)^{-1}X^TE(uu^T)X(X^TX)^{-1}\\
+&= (X^TX)^{-1}X^T\sigma ^2 I_nX(X^TX)^{-1} \\
+&= (X^TX)^{-1}\sigma ^2
+
+\end{align}
+
+
+其中$var(\hat{\beta})$表示$\hat(\beta)$ 的方差-协方差矩阵
+
+## 2.4 高斯-马尔可夫定理（最小方差）
+由$\hat{\beta}= (X^TX)^{-1}X^TY$可知$\hat{\beta}$可表示为一个矩阵和因变量观测值向量的$Y$的乘积，即
+$$\hat{\beta} = kY$$
+其中$ k = (X^TX)^{-1}X^T$是一个 $(K+1)*n$ 非随机元素矩阵。
+设$\widetilde{\beta}$是$\beta$的一个线形估计量，即$\widetilde{\beta} = cY$，这是为了随便取一个$\beta$来与按照之前的方式得到的估计量比较方差。
+因此，
+
+
+\begin{align}
+E(\widetilde{\beta}) &= E(cX\beta + cu) \\
+&= cX\beta
+\end{align}
+
+\
+若$\widetilde{\beta}$为无偏估计量，显然$cX$为单位矩阵$I$。$\widetilde{\beta}$的方差为：
+
+
+\begin{align}
+var(\widetilde{\beta}) &= var(cX\beta+cu)
+&= var(cu) \\
+&= c\cdot var(u)\cdot c^T\\
+&= \sigma ^2 cc^T
+\end{align}
+
+由上面k的性质可以将$c$写成
+
+$$
+c = (X^TX)^{-1}X^T + D
+$$
+由$cX = I$可得：
+
+$$
+(X^TX)^{-1}X^TX + DX = I
+$$
+
+即$I + DX = I$ ==> $DX=0$
+
+因此，
+
+
+\begin{align}
+cc^T &= ((X^TX)^{-1}X^T + D)((X^TX)^{-1}X^T + D)^T\\
+&= ((X^TX)^{-1}X^T + D)(X(X^TX)^{-1} + D^T)\\
+&=(X^TX)^{-1}X^TX(X^TX)^{-1}+ (X^TX)^{-1}X^TD^T + DX(X^TX)^{-1} + DD^T\\
+&= (X^TX)^{-1} + DD^T
+\end{align}
+
+
+故，
+
+
+\begin{align}
+var(\widetilde{\beta}) &= \sigma ^2 cc^T\\
+&= \sigma ^2((X^TX)^{-1} + DD^T)\\
+&= \sigma ^2(X^TX)^{-1} + \sigma ^2DD^T\\
+&=var(\hat{\beta}) + \sigma ^2DD^T\\
+&\ge var(\hat{\beta})
+\end{align}
+
+最后的不等号成立是因为$DD^T$为半正定矩阵。这就证明了OLS估计量$\hat{\beta}$是      所有线性无偏估计量中方差最小的。
+
+## 2.5 $\beta$的分布
+由前面的推导可知，
+$$
+\hat{\beta} = \beta + (X^TX)^{-1}X^Tu
+$$
+这表明$\beta$是$N$哥正态分布变量$u$的线性组合，因此也正态分布，由前面推导出来的均值和方差可知，
+$$
+\hat{\beta} \sim N(\beta, \sigma^2)(X^TX)^{-1}
+$$
+
+# 3.拟合后的曲线
+
+```{r}
+model <- lm(y~x)
+p + geom_abline(intercept = as.numeric(model$coefficients[1]), slope = as.numeric(model$coefficients[2])) + geom_text(x = 1.2, y = 0.3, label = "The fitting line") + annotate(geom = "segment", x = 1.2, y = 0.5, xend = 1.2, yend = 1, arrow = arrow(unit(10,"inch"), ends = "first"))
+
+# original set line  mse
+original_mse <- sum((set_slope * x + set_intercept - y)^2)
+
+# after fitting
+fitting_mse <- sum((as.numeric(model$coefficients[2]) * x + as.numeric(model$coefficients[1]) - y)^2)
+
+```
+
+原来随机设置的slope和intercept得到的mse为`r original_mse` ， 用线性回归拟合后得到的mse为`r fitting_mse`
