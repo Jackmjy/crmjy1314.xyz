@@ -8,7 +8,7 @@ googleAnalytics = "" # Enable Google Analytics by entering your tracking id
 
 [Author]
   name = "Andrew Min"
-  bio = "Love something interesting."
+  bio = "Love something interesting"
   avatar = "img/avatar.png"
 
 [Params]
